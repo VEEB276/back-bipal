@@ -28,7 +28,7 @@ public class Persona implements Serializable {
     @Column
     private Long id;
 
-    @Column(name = "id_tipo_documento", nullable = false, insertable = false, updatable = false)
+    @Column(name = "id_tipo_documento", nullable = false)
     private Long idTipoDocumento;
 
     @Column(name = "numero_documento")
@@ -38,10 +38,10 @@ public class Persona implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date fechaExpedicionDoc;
 
-    @Column(name = "id_genero", nullable = false, insertable = false, updatable = false)
+    @Column(name = "id_genero", nullable = false)
     private Long idGenero;
 
-    @Column(name = "id_enfoque_diferencial", nullable = false, insertable = false, updatable = false)
+    @Column(name = "id_enfoque_diferencial", nullable = false)
     private Long idEnfoqueDiferencial;
 
     @Column(name = "primer_nombre")
