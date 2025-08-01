@@ -27,10 +27,10 @@ public class EstudioHV implements Serializable {
     @Column
     private Long id;
 
-    @Column(name = "id_hoja_vida", nullable = false, insertable = false, updatable = false)
+    @Column(name = "id_hoja_vida", nullable = false)
     private Long idHojaVida;
 
-    @Column(name = "id_nivel_educativo", nullable = false, insertable = false, updatable = false)
+    @Column(name = "id_nivel_educativo", nullable = false)
     private Long idNivelEducativo;
 
     @Column(name = "graduado")

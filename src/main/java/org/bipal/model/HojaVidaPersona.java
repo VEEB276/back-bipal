@@ -27,7 +27,7 @@ public class HojaVidaPersona implements Serializable {
     @Column
     private Long id;
 
-    @Column(name = "id_persona", nullable = false, insertable = false, updatable = false)
+    @Column(name = "id_persona", nullable = false)
     private Long idPersona;
 
     @Column(name = "fecha_creacion")

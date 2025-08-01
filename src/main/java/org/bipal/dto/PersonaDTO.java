@@ -65,4 +65,6 @@ public class PersonaDTO implements Serializable {
 
     private String correoContacto;
 
+    private Long idHojaVida;
+
 }

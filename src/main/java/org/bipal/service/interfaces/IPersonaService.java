@@ -4,6 +4,11 @@ import org.bipal.dto.*;
 
 import java.util.List;
 
+/**
+ * Interface para el servicio de Persona
+ * @version 1.0
+ * @author Valentina Escobar
+ */
 public interface IPersonaService {
 
     /**

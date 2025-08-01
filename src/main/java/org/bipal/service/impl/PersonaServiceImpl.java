@@ -4,13 +4,16 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.bipal.dto.*;
 import org.bipal.mapper.*;
+import org.bipal.model.HojaVidaPersona;
 import org.bipal.model.Persona;
 import org.bipal.repository.*;
 import org.bipal.service.interfaces.IPersonaService;
 import org.bipal.util.ITools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -27,6 +30,9 @@ public class PersonaServiceImpl implements IPersonaService {
 
     private IDepartamentoMunicipioRepository departamentoMunicipioRepository;
 
+    private IHojaVidaPersonaRepository hojaVidaPersonaRepository;
+
+    @Transactional
     @Override
     public PersonaDTO createPersona(PersonaDTO personaDTO) {
 
@@ -34,7 +40,20 @@ public class PersonaServiceImpl implements IPersonaService {
         Persona toPersona = PersonaMapper.INSTANCE.toPersona(personaDTO);
 
         //Se guarda la persona
-        this.personaRepository.save(toPersona);
+        Persona persona = this.personaRepository.save(toPersona);
+        this.personaRepository.flush();
+
+        HojaVidaPersona hojaVidaPersona = new HojaVidaPersona();
+        hojaVidaPersona.setIdPersona(persona.getId());
+        hojaVidaPersona.setFechaCreacion(new Date());
+        hojaVidaPersona.setFechaModificacion(new Date());
+
+        //Se guarda la información de hoja de vida persona
+        HojaVidaPersona hojaVida = this.hojaVidaPersonaRepository.save(hojaVidaPersona);
+        this.hojaVidaPersonaRepository.flush();
+
+        //Se setea información del identificador de la hoja de vida persona
+        personaDTO.setIdHojaVida(hojaVida.getId());
 
         return personaDTO;
     }
@@ -47,7 +66,7 @@ public class PersonaServiceImpl implements IPersonaService {
     @Override
     public PersonaDTO findByIdPersona(Long id) {
 
-        //Se consulta información de la clase documento por identificador
+        //Se consulta información de la persona por identificador
         Persona persona = this.personaRepository
                 .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No existe la persona"));
@@ -110,6 +129,11 @@ public class PersonaServiceImpl implements IPersonaService {
     @Autowired
     public void setDepartamentoMunicipioRepository(IDepartamentoMunicipioRepository departamentoMunicipioRepository) {
         this.departamentoMunicipioRepository = departamentoMunicipioRepository;
+    }
+
+    @Autowired
+    public void setHojaVidaPersonaRepository(IHojaVidaPersonaRepository hojaVidaPersonaRepository) {
+        this.hojaVidaPersonaRepository = hojaVidaPersonaRepository;
     }
 
 }
