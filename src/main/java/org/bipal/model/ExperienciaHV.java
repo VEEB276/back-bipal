@@ -27,10 +27,10 @@ public class ExperienciaHV implements Serializable {
     @Column
     private Long id;
 
-    @Column(name = "id_hoja_vida", nullable = false, insertable = false, updatable = false)
+    @Column(name = "id_hoja_vida", nullable = false)
     private Long idHojaVida;
 
-    @Column(name = "id_tipo_experiencia", nullable = false, insertable = false, updatable = false)
+    @Column(name = "id_tipo_experiencia", nullable = false)
     private Long idTipoExperiencia;
 
     @Column(name = "descripcion_perfil")
