@@ -25,7 +25,7 @@ public class OtroEstudioHV implements Serializable {
     @Column
     private Long id;
 
-    @Column(name = "id_hoja_vida", nullable = false, insertable = false, updatable = false)
+    @Column(name = "id_hoja_vida", nullable = false)
     private Long idHojaVida;
 
     @Column(name = "numero_horas")

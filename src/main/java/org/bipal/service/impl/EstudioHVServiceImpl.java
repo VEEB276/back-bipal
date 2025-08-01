@@ -26,7 +26,7 @@ public class EstudioHVServiceImpl implements IEstudioHVService {
         //EstudioHV DTO hacia EstudioHV
         EstudioHV estudioHV = EstudioHVMapper.INSTANCE.toEstudioHV(estudioHVDTO);
 
-        //Se guarda la persona
+        //Se guarda el estudio
         this.estudioHVRepository.save(estudioHV);
 
         return estudioHVDTO;
