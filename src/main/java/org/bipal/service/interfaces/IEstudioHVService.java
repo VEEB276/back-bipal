@@ -1,6 +1,7 @@
 package org.bipal.service.interfaces;
 
 import org.bipal.dto.*;
+import org.bipal.model.EstudioHV;
 
 import java.util.List;
 
@@ -18,6 +19,14 @@ public interface IEstudioHVService {
      * @return estudio creado
      */
     EstudioHVDTO createEstudio(EstudioHVDTO estudioHVDTO);
+
+    /**
+     * Servicio encargado de crear múltiples estudios hv
+     *
+     * @param estudiosHVDTO lista de estudios hv a crear
+     * @return lista de estudios creados
+     */
+    List<EstudioHVDTO> createEstudios(List<EstudioHVDTO> estudiosHVDTO);
 
     /**
      * Servicio encargado de actualizar el estudio hoja de vida
@@ -41,5 +50,13 @@ public interface IEstudioHVService {
      * @return lista de niveles educativos
      */
     List<NivelEducativoDTO> searchAllNivelEducativo();
+
+    /**
+     * Servicio encargado de eliminar el estudio
+     *
+     * @param id identificador del estudio a eliminar
+     * @return estudio eliminado
+     */
+    EstudioHV deleteEstudioHV(Long id);
 
 }

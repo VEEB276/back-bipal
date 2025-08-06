@@ -2,8 +2,8 @@ package org.bipal.service.interfaces;
 
 import org.bipal.dto.EstudioHVDTO;
 import org.bipal.dto.ExperienciaHVDTO;
-import org.bipal.dto.NivelEducativoDTO;
 import org.bipal.dto.TipoExperienciaDTO;
+import org.bipal.model.ExperienciaHV;
 
 import java.util.List;
 
@@ -21,6 +21,14 @@ public interface IExperienciaHVService {
      * @return experiencia creada
      */
     ExperienciaHVDTO createExperiencia(ExperienciaHVDTO experienciaHVDTO);
+
+    /**
+     * Servicio encargado de crear múltiples experiencias hv
+     *
+     * @param experienciasHVDTO lista de experiencias hv a crear
+     * @return lista de experiencias creadas
+     */
+    List<ExperienciaHVDTO> createExperiencias(List<ExperienciaHVDTO> experienciasHVDTO);
 
     /**
      * Servicio encargado de actualizar el estudio hoja de vida
@@ -44,5 +52,13 @@ public interface IExperienciaHVService {
      * @return lista de tipos de experiencia
      */
     List<TipoExperienciaDTO> searchAllTipoExperiencia();
+
+    /**
+     * Servicio encargado de eliminar la experiencia
+     *
+     * @param id identificador de la experiencia a eliminar
+     * @return experiencia eliminada
+     */
+    ExperienciaHV deleteExperienciaHV(Long id);
 
 }

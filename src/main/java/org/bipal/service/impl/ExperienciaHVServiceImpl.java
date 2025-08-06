@@ -36,6 +36,17 @@ public class ExperienciaHVServiceImpl implements IExperienciaHVService {
     }
 
     @Override
+    public List<ExperienciaHVDTO> createExperiencias(List<ExperienciaHVDTO> experienciasHVDTO) {
+        //ExperienciaHV DTO List hacia ExperienciaHV List
+        List<ExperienciaHV> experienciaHV = ExperienciaHVMapper.INSTANCE.toExperienciaHVList(experienciasHVDTO);
+
+        //Se guardan las experiencias
+        List<ExperienciaHV> experienciasHV = this.experienciaHVRepository.saveAll(experienciaHV);
+
+        return ExperienciaHVMapper.INSTANCE.toExperienciaHVDTOList(experienciasHV);
+    }
+
+    @Override
     public EstudioHVDTO updateEstudio(EstudioHVDTO estudioHVDTO) {
         return null;
     }
@@ -56,6 +67,20 @@ public class ExperienciaHVServiceImpl implements IExperienciaHVService {
         //Se consulta los tipos de experiencia existentes
         return TipoExperienciaMapper.INSTANCE.toTipoExperienciaDTOList(
                 tipoExperienciaRepository.findAll());
+    }
+
+    @Override
+    public ExperienciaHV deleteExperienciaHV(Long id) {
+
+        //Consulta la experiencia por su id y en caso de no obtenerla lanza excepción
+        ExperienciaHV experiencia = experienciaHVRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("No existe la experiencia"));
+
+        //Se elimina la experiencia
+        this.experienciaHVRepository.delete(experiencia);
+
+        return experiencia;
     }
 
     @Autowired

@@ -5,6 +5,8 @@ import org.bipal.model.ExperienciaHV;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 /**
  * Mapper de ExperienciaHV
  *
@@ -17,5 +19,9 @@ public interface ExperienciaHVMapper {
     ExperienciaHV toExperienciaHV(ExperienciaHVDTO experienciaHVDTO);
 
     ExperienciaHVDTO toExperienciaHVDTO(ExperienciaHV experienciaHV);
+
+    List<ExperienciaHVDTO> toExperienciaHVDTOList(List<ExperienciaHV> experienciaHVList);
+
+    List<ExperienciaHV> toExperienciaHVList(List<ExperienciaHVDTO> experienciaHVDTOList);
 
 }

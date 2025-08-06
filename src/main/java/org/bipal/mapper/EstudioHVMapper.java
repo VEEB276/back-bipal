@@ -7,6 +7,8 @@ import org.bipal.model.Persona;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 /**
  * Mapper de EstudioHV
  *
@@ -19,5 +21,9 @@ public interface EstudioHVMapper {
     EstudioHV toEstudioHV(EstudioHVDTO estudioHVDTO);
 
     EstudioHVDTO toEstudioHVDTO(EstudioHV estudioHV);
+
+    List<EstudioHVDTO> toEstudioHVDTOList(List<EstudioHV> estudioHVList);
+
+    List<EstudioHV> toEstudioHVList(List<EstudioHVDTO> estudioHVDTOList);
 
 }

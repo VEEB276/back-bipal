@@ -1,11 +1,14 @@
 package org.bipal.controller;
 
 import org.bipal.dto.OtroEstudioHVDTO;
+import org.bipal.model.OtroEstudioHV;
 import org.bipal.service.interfaces.IOtroEstudioHVService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Controller for otro estudio hoja de vida
@@ -19,8 +22,8 @@ public class OtroEstudioHVController {
     private IOtroEstudioHVService otroEstudioHVService;
 
     @PostMapping("/create-otro-estudio")
-    public ResponseEntity<OtroEstudioHVDTO> createOtroEstudio(@RequestBody OtroEstudioHVDTO otroEstudioHVDTO) {
-        return new ResponseEntity<>(this.otroEstudioHVService.createOtroEstudio(otroEstudioHVDTO), HttpStatus.CREATED);
+    public ResponseEntity<List<OtroEstudioHVDTO>> createOtroEstudio(@RequestBody List<OtroEstudioHVDTO> otroEstudioHVDTO) {
+        return new ResponseEntity<>(this.otroEstudioHVService.createOtrosEstudios(otroEstudioHVDTO), HttpStatus.CREATED);
     }
 
     @PutMapping("/actualizar-otro-estudio")
@@ -39,6 +42,18 @@ public class OtroEstudioHVController {
         }
 
         return new ResponseEntity<>(otroEstudioHVDTO, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/eliminar-otro-estudio-hv/{id}")
+    public ResponseEntity<Boolean> deleteOtroEstudioHV(@PathVariable(value = "id") Long id) {
+
+        OtroEstudioHV otroEstudioHV = this.otroEstudioHVService.deleteOtroEstudioHV(id);
+
+        if (otroEstudioHV != null) {
+            return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(Boolean.FALSE, HttpStatus.EXPECTATION_FAILED);
     }
 
     //Inyecciones

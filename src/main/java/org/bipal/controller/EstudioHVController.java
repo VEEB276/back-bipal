@@ -1,6 +1,7 @@
 package org.bipal.controller;
 
 import org.bipal.dto.*;
+import org.bipal.model.EstudioHV;
 import org.bipal.service.interfaces.IEstudioHVService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,14 +21,15 @@ public class EstudioHVController {
 
     private IEstudioHVService estudioHVService;
 
-    @PostMapping("/create-estudio")
-    public ResponseEntity<EstudioHVDTO> createEstudio(@RequestBody EstudioHVDTO estudioHVDTO) {
-        return new ResponseEntity<>(this.estudioHVService.createEstudio(estudioHVDTO), HttpStatus.CREATED);
+    @PostMapping("/create-estudios")
+    public ResponseEntity<List<EstudioHVDTO>> createEstudios(@RequestBody List<EstudioHVDTO> estudios) {
+        List<EstudioHVDTO> creados = this.estudioHVService.createEstudios(estudios);
+        return new ResponseEntity<>(creados, HttpStatus.CREATED);
     }
 
     @PutMapping("/actualizar-estudio")
-    public ResponseEntity<EstudioHVDTO> updateEstudio(@RequestBody EstudioHVDTO estudioHVDTO) {
-        EstudioHVDTO estudioDTO = this.estudioHVService.createEstudio(estudioHVDTO);
+    public ResponseEntity<List<EstudioHVDTO>> updateEstudio(@RequestBody List<EstudioHVDTO> estudios) {
+        List<EstudioHVDTO> estudioDTO = this.estudioHVService.createEstudios(estudios);
         return new ResponseEntity<>(estudioDTO, HttpStatus.CREATED);
     }
 
@@ -48,6 +50,18 @@ public class EstudioHVController {
 
         return this.estudioHVService.searchAllNivelEducativo();
 
+    }
+
+    @DeleteMapping("/eliminar-estudio-hv/{id}")
+    public ResponseEntity<Boolean> deleteEstudioHV(@PathVariable(value = "id") Long id) {
+
+        EstudioHV estudioHV = this.estudioHVService.deleteEstudioHV(id);
+
+        if (estudioHV != null) {
+            return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(Boolean.FALSE, HttpStatus.EXPECTATION_FAILED);
     }
 
     //Inyecciones

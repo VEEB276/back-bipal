@@ -2,6 +2,7 @@ package org.bipal.controller;
 
 import org.bipal.dto.ExperienciaHVDTO;
 import org.bipal.dto.TipoExperienciaDTO;
+import org.bipal.model.ExperienciaHV;
 import org.bipal.service.interfaces.IExperienciaHVService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,13 +23,13 @@ public class ExperienciaHVController {
     private IExperienciaHVService experienciaHVService;
 
     @PostMapping("/create-experiencia")
-    public ResponseEntity<ExperienciaHVDTO> createExperiencia(@RequestBody ExperienciaHVDTO experienciaHVDTO) {
-        return new ResponseEntity<>(this.experienciaHVService.createExperiencia(experienciaHVDTO), HttpStatus.CREATED);
+    public ResponseEntity<List<ExperienciaHVDTO>> createExperiencia(@RequestBody List<ExperienciaHVDTO> experienciaHVDTO) {
+        return new ResponseEntity<>(this.experienciaHVService.createExperiencias(experienciaHVDTO), HttpStatus.CREATED);
     }
 
     @PutMapping("/actualizar-experiencia")
-    public ResponseEntity<ExperienciaHVDTO> updateEstudio(@RequestBody ExperienciaHVDTO experienciaHVDTO) {
-        ExperienciaHVDTO experienciaDTO = this.experienciaHVService.createExperiencia(experienciaHVDTO);
+    public ResponseEntity<List<ExperienciaHVDTO>> updateEstudio(@RequestBody List<ExperienciaHVDTO> experienciaHVDTO) {
+        List<ExperienciaHVDTO> experienciaDTO = this.experienciaHVService.createExperiencias(experienciaHVDTO);
         return new ResponseEntity<>(experienciaDTO, HttpStatus.CREATED);
     }
 
@@ -49,6 +50,18 @@ public class ExperienciaHVController {
 
         return this.experienciaHVService.searchAllTipoExperiencia();
 
+    }
+
+    @DeleteMapping("/eliminar-experiencia-hv/{id}")
+    public ResponseEntity<Boolean> deleteExperienciaHV(@PathVariable(value = "id") Long id) {
+
+        ExperienciaHV experienciaHV = this.experienciaHVService.deleteExperienciaHV(id);
+
+        if (experienciaHV != null) {
+            return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(Boolean.FALSE, HttpStatus.EXPECTATION_FAILED);
     }
 
     //Inyecciones

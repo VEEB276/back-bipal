@@ -11,6 +11,8 @@ import org.bipal.service.interfaces.IOtroEstudioHVService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Slf4j
 public class OtroEstudioHVServiceImpl implements IOtroEstudioHVService {
@@ -30,6 +32,18 @@ public class OtroEstudioHVServiceImpl implements IOtroEstudioHVService {
     }
 
     @Override
+    public List<OtroEstudioHVDTO> createOtrosEstudios(List<OtroEstudioHVDTO> otrosEstudiosHVDTO) {
+
+        //OtroEstudioHV DTO List hacia OtroEstudioHV List
+        List<OtroEstudioHV> otroEstudioHV = OtroEstudioHVMapper.INSTANCE.toOtroEstudioHVList(otrosEstudiosHVDTO);
+
+        //Se guardan otros estudios
+        List<OtroEstudioHV> otrosEstudiosHV = this.otroEstudioHVRepository.saveAll(otroEstudioHV);
+
+        return OtroEstudioHVMapper.INSTANCE.toOtroEstudioHVDTOList(otrosEstudiosHV);
+    }
+
+    @Override
     public EstudioHVDTO updateEstudio(EstudioHVDTO estudioHVDTO) {
         return null;
     }
@@ -43,6 +57,20 @@ public class OtroEstudioHVServiceImpl implements IOtroEstudioHVService {
                 .orElseThrow(() -> new EntityNotFoundException("No existe el otro estudio"));
 
         return OtroEstudioHVMapper.INSTANCE.toOtroEstudioHVDTO(otroEstudio);
+    }
+
+    @Override
+    public OtroEstudioHV deleteOtroEstudioHV(Long id) {
+
+        //Consulta el otro estudio por su id y en caso de no obtenerlo lanza excepción
+        OtroEstudioHV estudio = otroEstudioHVRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("No existe el otro estudio"));
+
+        //Se elimina el estudio
+        this.otroEstudioHVRepository.delete(estudio);
+
+        return estudio;
     }
 
     @Autowired
