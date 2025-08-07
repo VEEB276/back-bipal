@@ -45,7 +45,7 @@ jobs:
           docker save bipal-backend:latest > ./docker-image/bipal-backend.tar
       
       - name: Guardar imagen como artefacto
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: docker-image
           path: ./docker-image/bipal-backend.tar
