@@ -24,8 +24,8 @@ on:
 
 jobs:
   build:
-    # Solo ejecutar el workflow si el PR fue merged o estamos en la rama pipeline
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+    # Solo ejecutar este job si el PR fue merged o estamos en la rama pipeline, pero no para workflow_dispatch manual
+    if: (github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true))
     
     runs-on: ubuntu-latest
     
@@ -86,8 +86,8 @@ jobs:
       name: production
       url: http://${{ github.event.inputs.server_host || 'servidor' }}:8080/bipal
     
-    # Este job requiere aprobación manual
-    if: ${{ always() }}
+    # Este job solo se ejecuta cuando el workflow es activado manualmente
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     
     steps:
       - name: Descargar imagen Docker
