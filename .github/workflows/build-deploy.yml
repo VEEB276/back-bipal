@@ -9,9 +9,21 @@ on:
       - closed
     branches:
       - develop
+  workflow_dispatch:
+    inputs:
+      server_host:
+        description: 'Dirección IP o hostname del servidor'
+        required: true
+      server_username:
+        description: 'Nombre de usuario para SSH'
+        required: true
+      ssh_key:
+        description: 'Clave SSH (formato texto)'
+        required: true
+        type: string
 
 jobs:
-  build-and-deploy:
+  build:
     # Solo ejecutar el workflow si el PR fue merged o estamos en la rama pipeline
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     
@@ -58,24 +70,56 @@ jobs:
           path: ./docker-image/bipal-backend.tar
           retention-days: 1
       
-# TODO: configurar usuario del servidor
-      # - name: Desplegar en servidor
-      #   uses: appleboy/scp-action@master
-      #   with:
-      #     host: ${{ secrets.SERVER_HOST }}
-      #     username: ${{ secrets.SERVER_USERNAME }}
-      #     key: ${{ secrets.SERVER_SSH_KEY }}
-      #     source: "./docker-image/bipal-backend.tar,./.github/deploy.sh"
-      #     target: "/tmp/bipal-deploy"
+      - name: Guardar archivos de despliegue
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-files
+          path: |
+            .github/docker-compose.yml
+            .github/deploy.sh
+          retention-days: 1
+  
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: http://${{ github.event.inputs.server_host || 'servidor' }}:8080/bipal
+    
+    # Este job requiere aprobación manual
+    if: ${{ always() }}
+    
+    steps:
+      - name: Descargar imagen Docker
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-image
+          path: ./docker-image
       
-      # - name: Ejecutar despliegue
-      #   uses: appleboy/ssh-action@master
-      #   with:
-      #     host: ${{ secrets.SERVER_HOST }}
-      #     username: ${{ secrets.SERVER_USERNAME }}
-      #     key: ${{ secrets.SERVER_SSH_KEY }}
-      #     envs: DB_URL,DB_USERNAME,DB_PASSWORD,JWT_SECRET
-      #     script: |
-      #       cd /tmp/bipal-deploy
-      #       chmod +x deploy.sh
-      #       ./deploy.sh
+      - name: Descargar archivos de despliegue
+        uses: actions/download-artifact@v4
+        with:
+          name: deploy-files
+          path: ./deploy-files
+      
+      - name: Preparar clave SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ github.event.inputs.ssh_key }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ github.event.inputs.server_host }} >> ~/.ssh/known_hosts
+      
+      - name: Desplegar en servidor
+        run: |
+          # Crear directorio en servidor si no existe
+          ssh ${{ github.event.inputs.server_username }}@${{ github.event.inputs.server_host }} "mkdir -p /tmp/bipal-deploy"
+          
+          # Transferir archivos
+          scp ./docker-image/bipal-backend.tar ${{ github.event.inputs.server_username }}@${{ github.event.inputs.server_host }}:/tmp/bipal-deploy/
+          scp ./deploy-files/docker-compose.yml ${{ github.event.inputs.server_username }}@${{ github.event.inputs.server_host }}:/tmp/bipal-deploy/
+          
+          # Cargar la imagen Docker en el servidor
+          ssh ${{ github.event.inputs.server_username }}@${{ github.event.inputs.server_host }} "cd /tmp/bipal-deploy && docker load < bipal-backend.tar"
+          
+          # Ejecutar con docker-compose
+          ssh ${{ github.event.inputs.server_username }}@${{ github.event.inputs.server_host }} "cd /tmp/bipal-deploy && docker-compose down && docker-compose up -d"

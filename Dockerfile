@@ -9,8 +9,6 @@ COPY target/*.jar app.jar
 ENV SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/bipal?useSSL=false&serverTimezone=America/Bogota
 ENV SPRING_DATASOURCE_USERNAME=root
 ENV SPRING_DATASOURCE_PASSWORD=password
-ENV JWT_SECRET=rsi
-ENV ENABLE_PREFLIGHT=false
 
 # Puerto que expondrá la aplicación
 EXPOSE 8080
