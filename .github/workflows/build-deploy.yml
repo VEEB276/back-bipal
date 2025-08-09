@@ -73,10 +73,9 @@ jobs:
       - name: Guardar archivos de despliegue
         uses: actions/upload-artifact@v4
         with:
-          name: deploy-files
+          name: deploy-file
           path: |
             .github/docker-compose.yml
-            .github/deploy.sh
           retention-days: 1
   
   deploy:
