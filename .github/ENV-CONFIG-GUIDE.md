@@ -28,10 +28,10 @@ Puedes crear manualmente el archivo `.env` en el servidor:
 ssh tu_usuario@tu_servidor
 
 # Crear el directorio si no existe
-mkdir -p /tmp/bipal-deploy
+mkdir -p ~/bipal-deploy
 
 # Crear o editar el archivo .env
-nano /tmp/bipal-deploy/.env
+nano ~/bipal-deploy/.env
 ```
 
 Contenido ejemplo del archivo `.env`:

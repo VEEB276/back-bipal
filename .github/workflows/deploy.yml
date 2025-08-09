@@ -35,10 +35,10 @@ jobs:
           ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
       
       - name: Desplegar en servidor
+        # echo "Creando directorio ${DEPLOY_PATH} en el servidor..."
         #ssh ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} "mkdir -p ${DEPLOY_PATH}"
         run: |
-          DEPLOY_PATH="/tmp/bipal-deploy"
-          echo "Creando directorio ${DEPLOY_PATH} en el servidor..."
+          DEPLOY_PATH="~/bipal-deploy"
           
           echo "Transfiriendo archivos..."
           scp ./docker-image/bipal-backend.tar ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:${DEPLOY_PATH}/
