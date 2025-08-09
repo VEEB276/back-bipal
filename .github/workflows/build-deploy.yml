@@ -81,45 +81,8 @@ jobs:
   
   deploy:
     needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: production
-      url: http://${{ github.event.inputs.server_host || 'servidor' }}:8080/bipal
-    
-    # Este job solo se ejecuta cuando el workflow es activado manualmente
-    if: ${{ github.event_name == 'workflow_dispatch' }}
-    
-    steps:
-      - name: Descargar imagen Docker
-        uses: actions/download-artifact@v4
-        with:
-          name: docker-image
-          path: ./docker-image
-      
-      - name: Descargar archivos de despliegue
-        uses: actions/download-artifact@v4
-        with:
-          name: deploy-files
-          path: ./deploy-files
-      
-      - name: Preparar clave SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ github.event.inputs.ssh_key }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ github.event.inputs.server_host }} >> ~/.ssh/known_hosts
-      
-      - name: Desplegar en servidor
-        run: |
-          # Crear directorio en servidor si no existe
-          ssh ${{ github.event.inputs.server_username }}@${{ github.event.inputs.server_host }} "mkdir -p /tmp/bipal-deploy"
-          
-          # Transferir archivos
-          scp ./docker-image/bipal-backend.tar ${{ github.event.inputs.server_username }}@${{ github.event.inputs.server_host }}:/tmp/bipal-deploy/
-          scp ./deploy-files/docker-compose.yml ${{ github.event.inputs.server_username }}@${{ github.event.inputs.server_host }}:/tmp/bipal-deploy/
-          
-          # Cargar la imagen Docker en el servidor
-          ssh ${{ github.event.inputs.server_username }}@${{ github.event.inputs.server_host }} "cd /tmp/bipal-deploy && docker load < bipal-backend.tar"
-          
-          # Ejecutar con docker-compose
-          ssh ${{ github.event.inputs.server_username }}@${{ github.event.inputs.server_host }} "cd /tmp/bipal-deploy && docker-compose down && docker-compose up -d"
+    uses: ./.github/workflows/deploy.yml
+    secrets:
+      SERVER_HOST: ${{ secrets.SERVER_HOST }}
+      SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
+      SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
