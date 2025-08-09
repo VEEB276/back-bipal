@@ -1,0 +1,48 @@
+name: Deploy Docker Server
+
+on:
+  workflow_call:
+    secrets:
+      SERVER_HOST:
+        required: true
+      SERVER_USERNAME:
+        required: true
+      SERVER_SSH_KEY:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Descargar imagen Docker
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-image
+          path: ./docker-image
+      
+      - name: Descargar Docker Compose
+        uses: actions/download-artifact@v4
+        with:
+          name: deploy-file
+          path: ./deploy-file
+
+      - name: Preparar clave SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+      
+      - name: Desplegar en servidor
+        # echo "Creando directorio ${DEPLOY_PATH} en el servidor..."
+        #ssh ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} "mkdir -p ${DEPLOY_PATH}"
+        run: |
+          DEPLOY_PATH="~/bipal-deploy"
+          
+          echo "Transfiriendo archivos..."
+          scp ./docker-image/bipal-backend.tar ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:${DEPLOY_PATH}/
+          scp ./deploy-file/docker-compose.yml ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:${DEPLOY_PATH}/
+          
+          echo "Ejecutando despliegue en el servidor..."
+          ssh ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} "cd ${DEPLOY_PATH} && docker load < bipal-backend.tar && docker-compose down && docker-compose up -d"

@@ -1,0 +1,87 @@
+name: Build and Deploy Spring Boot App
+
+on:
+  push:
+    branches:
+      - pipeline
+  pull_request:
+    types:
+      - closed
+    branches:
+      - develop
+  workflow_dispatch:
+    inputs:
+      server_host:
+        description: 'Dirección IP o hostname del servidor'
+        required: true
+      server_username:
+        description: 'Nombre de usuario para SSH'
+        required: true
+      ssh_key:
+        description: 'Clave SSH (formato texto)'
+        required: true
+        type: string
+
+jobs:
+  build:
+    # Solo ejecutar este job si el PR fue merged o estamos en la rama pipeline, pero no para workflow_dispatch manual
+    if: (github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true))
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+      
+      - name: Configurar JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+      
+      - name: Compilar con Maven
+        run: mvn -B clean package -DskipTests
+      
+      # - name: Ejecutar tests
+      #   run: mvn -B test
+      
+      - name: Guardar JAR como artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: jar-file
+          path: target/*.jar
+          retention-days: 1
+      
+      - name: Construir imagen Docker
+        run: |
+          docker build -t bipal-backend:${{ github.sha }} .
+          docker tag bipal-backend:${{ github.sha }} bipal-backend:latest
+      
+      - name: Guardar imagen Docker
+        run: |
+          mkdir -p ./docker-image
+          docker save bipal-backend:latest > ./docker-image/bipal-backend.tar
+      
+      - name: Guardar imagen como artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-image
+          path: ./docker-image/bipal-backend.tar
+          retention-days: 1
+      
+      - name: Guardar archivos de despliegue
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-file
+          path: |
+            .github/docker-compose.yml
+          retention-days: 1
+  
+  deploy:
+    needs: build
+    uses: ./.github/workflows/deploy.yml
+    secrets:
+      SERVER_HOST: ${{ secrets.SERVER_HOST }}
+      SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
+      SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}

@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  bipal-backend:
+    image: bipal-backend:latest
+    container_name: bipal-backend
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL:-jdbc:mysql://localhost:3306/bipal?useSSL=false&serverTimezone=America/Bogota}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME:-root}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD:-password}
+      - SPRING_PROFILES_ACTIVE=prod
+    volumes:
+      - /var/log/bipal:/logs
+    networks:
+      - qa-net
+      - bipal-network
+
+networks:
+  qa-net:
+    external: true
+  bipal-network:
+    driver: bridge
