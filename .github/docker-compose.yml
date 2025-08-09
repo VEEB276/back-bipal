@@ -15,8 +15,11 @@ services:
     volumes:
       - /var/log/bipal:/logs
     networks:
+      - qa-net
       - bipal-network
 
 networks:
+  qa-net:
+    external: true
   bipal-network:
     driver: bridge
