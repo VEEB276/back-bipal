@@ -10,8 +10,10 @@ import org.bipal.repository.*;
 import org.bipal.service.interfaces.IPersonaService;
 import org.bipal.util.ITools;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
