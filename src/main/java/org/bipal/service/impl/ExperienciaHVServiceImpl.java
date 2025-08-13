@@ -8,6 +8,7 @@ import org.bipal.dto.TipoExperienciaDTO;
 import org.bipal.mapper.ExperienciaHVMapper;
 import org.bipal.mapper.TipoExperienciaMapper;
 import org.bipal.model.ExperienciaHV;
+import org.bipal.model.HojaVidaPersona;
 import org.bipal.repository.*;
 import org.bipal.service.interfaces.IExperienciaHVService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ public class ExperienciaHVServiceImpl implements IExperienciaHVService {
     private IExperienciaHVRepository experienciaHVRepository;
 
     private ITipoExperienciaRepository tipoExperienciaRepository;
+
+    private IHojaVidaPersonaRepository hojaVidaPersonaRepository;
 
     @Override
     public ExperienciaHVDTO createExperiencia(ExperienciaHVDTO experienciaHVDTO) {
@@ -83,6 +86,17 @@ public class ExperienciaHVServiceImpl implements IExperienciaHVService {
         return experiencia;
     }
 
+    @Override
+    public List<ExperienciaHVDTO> searchExperienciasByIdPersona(Long idPersona) {
+        //Cruce persona -> hoja vida -> experiencias
+        HojaVidaPersona hojaVidaPersona = hojaVidaPersonaRepository.findByIdPersona(idPersona);
+        if (hojaVidaPersona == null) {
+            return List.of();
+        }
+        List<ExperienciaHV> experiencias = experienciaHVRepository.findByIdHojaVida(hojaVidaPersona.getId());
+        return ExperienciaHVMapper.INSTANCE.toExperienciaHVDTOList(experiencias);
+    }
+
     @Autowired
     public void setExperienciaHVRepository(IExperienciaHVRepository experienciaHVRepository) {
         this.experienciaHVRepository = experienciaHVRepository;
@@ -91,6 +105,11 @@ public class ExperienciaHVServiceImpl implements IExperienciaHVService {
     @Autowired
     public void setTipoExperienciaRepository(ITipoExperienciaRepository tipoExperienciaRepository) {
         this.tipoExperienciaRepository = tipoExperienciaRepository;
+    }
+
+    @Autowired
+    public void setHojaVidaPersonaRepository(IHojaVidaPersonaRepository hojaVidaPersonaRepository) {
+        this.hojaVidaPersonaRepository = hojaVidaPersonaRepository;
     }
 
 }

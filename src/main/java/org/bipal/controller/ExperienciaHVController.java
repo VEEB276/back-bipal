@@ -52,6 +52,15 @@ public class ExperienciaHVController {
 
     }
 
+    @GetMapping("/search-experiencias-by-id-persona/{idPersona}")
+    public ResponseEntity<List<ExperienciaHVDTO>> searchExperienciasByIdPersona(@PathVariable("idPersona") Long idPersona) {
+        List<ExperienciaHVDTO> experiencias = this.experienciaHVService.searchExperienciasByIdPersona(idPersona);
+        if (experiencias.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(experiencias, HttpStatus.OK);
+    }
+
     @DeleteMapping("/eliminar-experiencia-hv/{id}")
     public ResponseEntity<Boolean> deleteExperienciaHV(@PathVariable(value = "id") Long id) {
 
@@ -71,5 +80,3 @@ public class ExperienciaHVController {
     }
 
 }
-
-

@@ -56,6 +56,15 @@ public class OtroEstudioHVController {
         return new ResponseEntity<>(Boolean.FALSE, HttpStatus.EXPECTATION_FAILED);
     }
 
+    @GetMapping("/search-otros-estudios-by-id-persona/{idPersona}")
+    public ResponseEntity<List<OtroEstudioHVDTO>> searchOtrosEstudiosByIdPersona(@PathVariable("idPersona") Long idPersona) {
+        List<OtroEstudioHVDTO> otros = this.otroEstudioHVService.searchOtrosEstudiosByIdPersona(idPersona);
+        if (otros.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(otros, HttpStatus.OK);
+    }
+
     //Inyecciones
     @Autowired
     public void setOtroEstudioHVService(IOtroEstudioHVService otroEstudioHVService) {
@@ -63,5 +72,3 @@ public class OtroEstudioHVController {
     }
 
 }
-
-

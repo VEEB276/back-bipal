@@ -61,4 +61,11 @@ public interface IExperienciaHVService {
      */
     ExperienciaHV deleteExperienciaHV(Long id);
 
+    /**
+     * Servicio encargado de listar experiencias de una persona (cruce persona -> hoja vida -> experiencias)
+     * @param idPersona identificador de la persona
+     * @return lista de experiencias hv
+     */
+    List<ExperienciaHVDTO> searchExperienciasByIdPersona(Long idPersona);
+
 }

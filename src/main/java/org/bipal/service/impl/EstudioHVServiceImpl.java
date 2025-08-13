@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bipal.dto.*;
 import org.bipal.mapper.*;
 import org.bipal.model.EstudioHV;
+import org.bipal.model.HojaVidaPersona;
 import org.bipal.repository.*;
 import org.bipal.service.interfaces.IEstudioHVService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ public class EstudioHVServiceImpl implements IEstudioHVService {
     private IEstudioHVRepository estudioHVRepository;
 
     private INivelEducativoRepository nivelEducativoRepository;
+
+    private IHojaVidaPersonaRepository hojaVidaPersonaRepository;
 
     @Override
     public EstudioHVDTO createEstudio(EstudioHVDTO estudioHVDTO) {
@@ -81,6 +84,16 @@ public class EstudioHVServiceImpl implements IEstudioHVService {
         return estudio;
     }
 
+    @Override
+    public List<EstudioHVDTO> searchEstudiosByIdPersona(Long idPersona) {
+        HojaVidaPersona hojaVidaPersona = hojaVidaPersonaRepository.findByIdPersona(idPersona);
+        if (hojaVidaPersona == null) {
+            return List.of();
+        }
+        List<EstudioHV> estudios = estudioHVRepository.findByIdHojaVida(hojaVidaPersona.getId());
+        return EstudioHVMapper.INSTANCE.toEstudioHVDTOList(estudios);
+    }
+
     @Autowired
     public void setEstudioHVRepository(IEstudioHVRepository estudioHVRepository) {
         this.estudioHVRepository = estudioHVRepository;
@@ -89,6 +102,11 @@ public class EstudioHVServiceImpl implements IEstudioHVService {
     @Autowired
     public void setNivelEducativoRepository(INivelEducativoRepository nivelEducativoRepository) {
         this.nivelEducativoRepository = nivelEducativoRepository;
+    }
+
+    @Autowired
+    public void setHojaVidaPersonaRepository(IHojaVidaPersonaRepository hojaVidaPersonaRepository) {
+        this.hojaVidaPersonaRepository = hojaVidaPersonaRepository;
     }
 
 }

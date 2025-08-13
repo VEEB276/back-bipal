@@ -4,6 +4,8 @@ import org.bipal.model.ExperienciaHV;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Repositorio de experiencia hoja de vida
  *
@@ -12,5 +14,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface IExperienciaHVRepository extends JpaRepository<ExperienciaHV, Long> {
+
+    //Consulta las experiencias por id hoja de vida
+    List<ExperienciaHV> findByIdHojaVida(Long idHojaVida);
 
 }

@@ -64,6 +64,15 @@ public class EstudioHVController {
         return new ResponseEntity<>(Boolean.FALSE, HttpStatus.EXPECTATION_FAILED);
     }
 
+    @GetMapping("/search-estudios-by-id-persona/{idPersona}")
+    public ResponseEntity<List<EstudioHVDTO>> searchEstudiosByIdPersona(@PathVariable("idPersona") Long idPersona) {
+        List<EstudioHVDTO> estudios = this.estudioHVService.searchEstudiosByIdPersona(idPersona);
+        if (estudios.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(estudios, HttpStatus.OK);
+    }
+
     //Inyecciones
     @Autowired
     public void setEstudioHVService(IEstudioHVService estudioHVService) {
@@ -71,5 +80,3 @@ public class EstudioHVController {
     }
 
 }
-
-

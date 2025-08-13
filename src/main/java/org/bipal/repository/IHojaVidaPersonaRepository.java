@@ -13,4 +13,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IHojaVidaPersonaRepository extends JpaRepository<HojaVidaPersona, Long> {
 
+    //Consulta la hoja de vida por el id de la persona
+    HojaVidaPersona findByIdPersona(Long idPersona);
+
 }

@@ -59,4 +59,11 @@ public interface IEstudioHVService {
      */
     EstudioHV deleteEstudioHV(Long id);
 
+    /**
+     * Servicio encargado de listar estudios de una persona (cruce persona -> hoja vida -> estudios)
+     * @param idPersona identificador de la persona
+     * @return lista de estudios hv
+     */
+    List<EstudioHVDTO> searchEstudiosByIdPersona(Long idPersona);
+
 }
