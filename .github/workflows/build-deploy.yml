@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - pipeline
+      - develop
   pull_request:
     types:
       - closed
