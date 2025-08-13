@@ -18,6 +18,7 @@ public interface PersonaMapper {
     @Mapping(target = "ciudadResidencia", source = "ciudadResidencia")
     Persona toPersona(PersonaDTO personaDTO);
 
+    @Mapping(target = "idHojaVida", source = "hojaVidaPersona.id")
     PersonaDTO toPersonaDTO(Persona persona);
 
 }

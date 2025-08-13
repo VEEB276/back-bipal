@@ -103,4 +103,8 @@ public class Persona implements Serializable {
     @JoinColumn(name = "id_enfoque_diferencial", insertable = false, updatable = false)
     private EnfoqueDiferencial enfoqueDiferencial;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", referencedColumnName = "id_persona", insertable = false, updatable = false)
+    private HojaVidaPersona hojaVidaPersona;
+
 }
