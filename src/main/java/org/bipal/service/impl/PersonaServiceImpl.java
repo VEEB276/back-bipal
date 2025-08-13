@@ -52,7 +52,8 @@ public class PersonaServiceImpl implements IPersonaService {
         HojaVidaPersona hojaVida = this.hojaVidaPersonaRepository.save(hojaVidaPersona);
         this.hojaVidaPersonaRepository.flush();
 
-        //Se setea información del identificador de la hoja de vida persona
+        //Se setean ids en el DTO
+        personaDTO.setId(persona.getId());
         personaDTO.setIdHojaVida(hojaVida.getId());
 
         return personaDTO;
