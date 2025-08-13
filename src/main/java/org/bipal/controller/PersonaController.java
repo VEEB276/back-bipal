@@ -23,12 +23,20 @@ public class PersonaController {
     @PostMapping("/create-persona")
     public ResponseEntity<PersonaDTO> createPersona(@RequestBody PersonaDTO personaDTO) {
         return new ResponseEntity<>(this.personaService.createPersona(personaDTO), HttpStatus.CREATED);
+    // Nuevo endpoint /me: obtiene persona a partir del numeroDocumento que llega en header (en un escenario real se extraería del JWT)
+    @GetMapping("/find")
+    public ResponseEntity<PersonaDTO> getPersona(@RequestParam(name = "numero-documento") String numeroDocumento) {
+        PersonaDTO dto = this.personaService.findByNumeroDocumento(numeroDocumento);
+        if (dto == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PutMapping("/actualizar-persona")
-    public ResponseEntity<PersonaDTO> updateEntidadComision(@RequestBody PersonaDTO personaDTO) {
-        PersonaDTO persona = this.personaService.createPersona(personaDTO);
-        return new ResponseEntity<>(persona, HttpStatus.CREATED);
+    public ResponseEntity<PersonaDTO> updatePersona(@RequestBody PersonaDTO personaDTO) {
+        PersonaDTO persona = this.personaService.updatePersona(personaDTO);
+        return new ResponseEntity<>(persona, HttpStatus.OK);
     }
 
     @GetMapping("/find-by-id-persona/{id}")
@@ -78,5 +86,3 @@ public class PersonaController {
     }
 
 }
-
-

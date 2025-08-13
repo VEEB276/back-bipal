@@ -61,7 +61,13 @@ public class PersonaServiceImpl implements IPersonaService {
 
     @Override
     public PersonaDTO updatePersona(PersonaDTO personaDTO) {
-        return null;
+        var persona = this.personaRepository.findById(personaDTO.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe la persona para este numero de identificación"));
+        //no se puede cambiar el número de documento.
+        personaDTO.setNumeroDocumento(persona.getNumeroDocumento());
+        //se actualiza la información de la persona
+        this.personaRepository.save(PersonaMapper.INSTANCE.toPersona(personaDTO));
+        return personaDTO;
     }
 
     @Override
@@ -105,6 +111,13 @@ public class PersonaServiceImpl implements IPersonaService {
         //Se consulta departamento y municipio
         return DepartamentoMunicipioMapper.INSTANCE.toDepartamentoMunicipioDTOList(
                 departamentoMunicipioRepository.findAllByQuery(queryConPorcentajes));
+    }
+
+    @Override
+    public PersonaDTO findByNumeroDocumento(String numeroDocumento) {
+        return personaRepository.findByNumeroDocumento(numeroDocumento)
+                .map(PersonaMapper.INSTANCE::toPersonaDTO)
+                .orElse(null);
     }
 
     @Autowired

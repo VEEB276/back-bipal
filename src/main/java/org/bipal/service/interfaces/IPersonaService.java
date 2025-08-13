@@ -64,4 +64,11 @@ public interface IPersonaService {
      */
     List<DepartamentoMunicipioDTO> searchAllDepartamentoMunicipio(String query);
 
+    /**
+     * Servicio encargado de consultar una persona por su número de documento
+     *
+     * @param numeroDocumento número de documento de la persona
+     * @return información de la persona
+     */
+    PersonaDTO findByNumeroDocumento(String numeroDocumento);
 }
