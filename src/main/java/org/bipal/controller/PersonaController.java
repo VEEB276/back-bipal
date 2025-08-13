@@ -23,6 +23,8 @@ public class PersonaController {
     @PostMapping("/create-persona")
     public ResponseEntity<PersonaDTO> createPersona(@RequestBody PersonaDTO personaDTO) {
         return new ResponseEntity<>(this.personaService.createPersona(personaDTO), HttpStatus.CREATED);
+    }
+
     // Nuevo endpoint /me: obtiene persona a partir del numeroDocumento que llega en header (en un escenario real se extraería del JWT)
     @GetMapping("/find")
     public ResponseEntity<PersonaDTO> getPersona(@RequestParam(name = "numero-documento") String numeroDocumento) {
