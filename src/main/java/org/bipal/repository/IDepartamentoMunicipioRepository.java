@@ -30,7 +30,7 @@ public interface IDepartamentoMunicipioRepository extends JpaRepository<Departam
     WHERE 
       UPPER(
         REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
-          CONCAT(dm.departamento, dm.municipio),
+          CONCAT(dm.departamento, ', ', dm.municipio),
         'á', 'a'), 'é', 'e'), 'í', 'i'), 'ó', 'o'), 'ú', 'u')
       ) 
       LIKE 

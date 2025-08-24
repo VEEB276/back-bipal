@@ -26,4 +26,6 @@ public class DepartamentoMunicipioDTO implements Serializable {
 
     private String municipio;
 
+    private String nombreCompleto;
+
 }
