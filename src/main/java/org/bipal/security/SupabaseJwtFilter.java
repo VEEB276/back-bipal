@@ -40,13 +40,24 @@ public class SupabaseJwtFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         boolean protegido = path.startsWith(request.getContextPath() + "/api/");
 
+        // Permitir siempre preflight CORS sin exigir token
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String auth = request.getHeader("Authorization");
+        if (auth == null) {
+            auth = request.getHeader("authorization"); // fallback defensivo
+        }
+
         if (!protegido) { // no protegido -> continuar
             filterChain.doFilter(request, response);
             return;
         }
 
         if (auth == null || !auth.startsWith("Bearer ")) {
+            log.warn("Falta token Bearer en request a recurso protegido: {}", path);
             unauthorized(response, "Falta token Bearer");
             return;
         }
@@ -93,7 +104,21 @@ public class SupabaseJwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    private void addCorsHeaders(HttpServletResponse response) {
+        // Asegurar cabeceras CORS en respuestas tempranas (401) para que el navegador no las trate como error de CORS.
+        if (!response.containsHeader("Access-Control-Allow-Origin")) {
+            response.setHeader("Access-Control-Allow-Origin", "*");
+        }
+        if (!response.containsHeader("Access-Control-Allow-Headers")) {
+            response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept, Origin, X-Requested-With");
+        }
+        if (!response.containsHeader("Access-Control-Allow-Methods")) {
+            response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        }
+    }
+
     private void unauthorized(HttpServletResponse response, String mensaje) throws IOException {
+        addCorsHeaders(response);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         String body = "{\"error\":\"unauthorized\",\"message\":\"" + mensaje.replace('"',' ') + "\"}";
@@ -102,8 +127,6 @@ public class SupabaseJwtFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        // Siempre se decide dentro del filtro usando la variable protegido.
-        return false;
+        return false; // todo se decide adentro
     }
 }
-
