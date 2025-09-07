@@ -2,6 +2,8 @@ package org.bipal.controller;
 
 import org.bipal.dto.*;
 import org.bipal.service.interfaces.IPersonaService;
+import org.bipal.service.interfaces.IPersonaEliminarService;
+import org.bipal.security.SupabaseJwtFilter; // agregado para constante de atributo
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import java.util.List;
 public class PersonaController {
 
     private IPersonaService personaService;
+    private IPersonaEliminarService personaEliminarService;
 
     @PostMapping("/create-persona")
     public ResponseEntity<PersonaDTO> createPersona(@RequestBody PersonaDTO personaDTO) {
@@ -81,10 +84,31 @@ public class PersonaController {
 
     }
 
+    // Ahora se toma el idPersona desde el atributo puesto por el filtro JWT, no desde path.
+    @DeleteMapping("/eliminar-persona-completa")
+    public ResponseEntity<Void> eliminarPersonaCompleta(
+            @RequestAttribute(name = SupabaseJwtFilter.ATTR_ID_PERSONA, required = false)
+            Long idPersonaToken) {
+        if (idPersonaToken == null) {
+            // no es posible identificar la persona desde el token
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        boolean eliminado = this.personaEliminarService.eliminarPersonaCompleta(idPersonaToken);
+        if (!eliminado) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     //Inyecciones
     @Autowired
     public void setPersonaService(IPersonaService personaService) {
         this.personaService = personaService;
+    }
+
+    @Autowired
+    public void setPersonaEliminarService(IPersonaEliminarService personaEliminarService) {
+        this.personaEliminarService = personaEliminarService;
     }
 
 }

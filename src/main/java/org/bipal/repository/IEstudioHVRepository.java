@@ -18,4 +18,6 @@ public interface IEstudioHVRepository extends JpaRepository<EstudioHV, Long> {
     //Consulta los estudios por id hoja de vida
     List<EstudioHV> findByIdHojaVida(Long idHojaVida);
 
+    //Elimina en bloque por hoja de vida
+    void deleteByIdHojaVida(Long idHojaVida);
 }

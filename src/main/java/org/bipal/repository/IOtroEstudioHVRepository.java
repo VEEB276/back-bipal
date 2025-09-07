@@ -18,4 +18,6 @@ public interface IOtroEstudioHVRepository extends JpaRepository<OtroEstudioHV, L
     //Consulta otros estudios por id hoja de vida
     List<OtroEstudioHV> findByIdHojaVida(Long idHojaVida);
 
+    //Elimina en bloque por hoja de vida
+    void deleteByIdHojaVida(Long idHojaVida);
 }

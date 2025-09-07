@@ -16,4 +16,6 @@ public interface IHojaVidaPersonaRepository extends JpaRepository<HojaVidaPerson
     //Consulta la hoja de vida por el id de la persona
     HojaVidaPersona findByIdPersona(Long idPersona);
 
+    //Elimina la hoja de vida por id persona
+    void deleteByIdPersona(Long idPersona);
 }

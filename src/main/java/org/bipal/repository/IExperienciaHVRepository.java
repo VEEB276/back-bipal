@@ -18,4 +18,6 @@ public interface IExperienciaHVRepository extends JpaRepository<ExperienciaHV, L
     //Consulta las experiencias por id hoja de vida
     List<ExperienciaHV> findByIdHojaVida(Long idHojaVida);
 
+    //Elimina en bloque por hoja de vida
+    void deleteByIdHojaVida(Long idHojaVida);
 }
