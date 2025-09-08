@@ -87,17 +87,17 @@ public class PersonaController {
     // Ahora se toma el idPersona desde el atributo puesto por el filtro JWT, no desde path.
     @DeleteMapping("/eliminar-persona-completa")
     public ResponseEntity<Void> eliminarPersonaCompleta(
-            @RequestAttribute(name = SupabaseJwtFilter.ATTR_ID_PERSONA, required = false)
-            Long idPersonaToken) {
-        if (idPersonaToken == null) {
-            // no es posible identificar la persona desde el token
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            @RequestAttribute(name = SupabaseJwtFilter.ATTR_ID_PERSONA, required = false) Long idPersonaToken) {
+        try {
+            boolean eliminado = this.personaEliminarService.eliminarPersonaCompleta(idPersonaToken);
+            if (!eliminado) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalStateException ex) {
+            // fallo en eliminación remota o header inválido
+            return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
         }
-        boolean eliminado = this.personaEliminarService.eliminarPersonaCompleta(idPersonaToken);
-        if (!eliminado) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     //Inyecciones

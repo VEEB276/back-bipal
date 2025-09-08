@@ -2,6 +2,7 @@ package org.bipal.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bipal.external.supabase.SupabaseFunctionsClient;
 import org.bipal.model.HojaVidaPersona;
 import org.bipal.model.Persona;
 import org.bipal.repository.*;
@@ -9,6 +10,7 @@ import org.bipal.service.interfaces.IPersonaEliminarService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -24,31 +26,38 @@ public class PersonaEliminarServiceImpl implements IPersonaEliminarService {
     private final IEstudioHVRepository estudioHVRepository;
     private final IExperienciaHVRepository experienciaHVRepository;
     private final IOtroEstudioHVRepository otroEstudioHVRepository;
+    private final SupabaseFunctionsClient supabaseFunctionsClient;
 
     @Override
     @Transactional
     public boolean eliminarPersonaCompleta(Long idPersona) {
-        Optional<Persona> personaOpt = personaRepository.findById(idPersona);
-        if (personaOpt.isEmpty()) {
-            return false;
+        // 0. el usuario puede no tener registro como persona, entonces solo se elimina el usuario.
+        if (idPersona != null) {
+            Optional<Persona> personaOpt = personaRepository.findById(idPersona);
+            if (personaOpt.isEmpty()) {
+                return false; // 404 en controller
+            }
+
+            // 1. proceder con eliminación la persona
+            HojaVidaPersona hojaVida = hojaVidaPersonaRepository.findByIdPersona(idPersona);
+            if (hojaVida != null) {
+                Long idHojaVida = hojaVida.getId();
+                // Eliminar dependientes (orden: hijos -> hoja de vida -> persona)
+                experienciaHVRepository.deleteByIdHojaVida(idHojaVida);
+                estudioHVRepository.deleteByIdHojaVida(idHojaVida);
+                otroEstudioHVRepository.deleteByIdHojaVida(idHojaVida);
+                hojaVidaPersonaRepository.deleteById(hojaVida.getId());
+            }
+
+            personaRepository.deleteById(idPersona);
         }
-
-        // Obtiene hoja de vida (1:1 asumido)
-        HojaVidaPersona hojaVida = hojaVidaPersonaRepository.findByIdPersona(idPersona);
-        if (hojaVida != null) {
-            Long idHojaVida = hojaVida.getId();
-            // Eliminar dependientes (orden: hijos -> hoja de vida -> persona)
-            experienciaHVRepository.deleteByIdHojaVida(idHojaVida);
-            estudioHVRepository.deleteByIdHojaVida(idHojaVida);
-            otroEstudioHVRepository.deleteByIdHojaVida(idHojaVida);
-            hojaVidaPersonaRepository.deleteById(hojaVida.getId());
+        // 2. Llamar primero a edge function para eliminar usuario remoto (usa Authorization propagado por interceptor Feign).
+        try {
+            supabaseFunctionsClient.deleteUser(Map.of());
+        } catch (Exception e) {
+            log.warn("Fallo eliminando usuario en Supabase (edge function). Abortando transacción. Causa: {}", e.getMessage());
+            throw new IllegalStateException("No se pudo eliminar el usuario remoto en Supabase", e);
         }
-
-        // TODO: Implementar auditoria de accion de eliminar (requerido futuro legal?)
-
-        personaRepository.deleteById(idPersona);
-        // flush se delega al commit de la transacción
         return true;
     }
 }
-
