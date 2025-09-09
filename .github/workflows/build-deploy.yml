@@ -86,3 +86,14 @@ jobs:
       SERVER_HOST: ${{ secrets.SERVER_HOST }}
       SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
       SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+
+  dockerhub-publish:
+    needs: build
+    uses: ./.github/workflows/dockerhub.yml
+    with:
+      image-name: bipal-backend
+      download-artifact-name: jar-file
+      check-dist: false
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
