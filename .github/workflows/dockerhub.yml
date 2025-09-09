@@ -27,6 +27,11 @@ on:
         required: false
         default: ''
         type: string
+      download-artifact-directory:
+        description: 'Directorio donde descargar el artifact (si se especifica download-artifact-name)'
+        required: false
+        default: 'dist'
+        type: string
     secrets:
       DOCKERHUB_USERNAME:
         required: true
@@ -52,7 +57,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ inputs.download-artifact-name }}
-          path: dist
+          path: ${{ inputs.download-artifact-directory }}
 
       - name: Verificar dist (opcional)
         if: inputs.check-dist == true

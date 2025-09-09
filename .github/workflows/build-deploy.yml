@@ -93,6 +93,7 @@ jobs:
     with:
       image-name: bipal-backend
       download-artifact-name: jar-file
+      download-artifact-directory: target
       check-dist: false
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
