@@ -11,4 +11,7 @@ public interface SupabaseFunctionsClient {
 
     @PostMapping(value = "/delete-user", consumes = "application/json")
     void deleteUser(@RequestBody Map<String, Object> body);
+
+    @PostMapping(value = "/update-user-metadata", consumes = "application/json")
+    void updateUserMetadata(@RequestBody Map<String, Object> body);
 }
