@@ -71,4 +71,24 @@ public interface IPersonaService {
      * @return información de la persona
      */
     PersonaDTO findByNumeroDocumento(String numeroDocumento);
+
+    /**
+     * Actualiza en Supabase (GoTrue) el user_metadata.idPersona del usuario autenticado.
+     * Debe ejecutarse dentro del contexto de una request con Authorization válido.
+     *
+     * @param idPersona identificador de la persona a propagar en user_metadata
+     * @return true si se actualiza correctamente
+     * @throws IllegalStateException si Supabase retorna error o falla la llamada
+     */
+    boolean actualizarIdPersonaEnSupabase(Long idPersona);
+
+    /**
+     * Busca una persona por número de documento y, si existe, actualiza en Supabase
+     * el user_metadata.idPersona del usuario autenticado.
+     *
+     * @param numeroDocumento número de documento a buscar
+     * @return true si la persona existe y se actualiza en Supabase; false si no existe la persona
+     * @throws IllegalStateException si Supabase retorna error o falla la llamada
+     */
+    boolean migrarUsuarioPorNumeroDocumento(String numeroDocumento);
 }

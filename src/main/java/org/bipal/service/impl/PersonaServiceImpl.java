@@ -60,22 +60,8 @@ public class PersonaServiceImpl implements IPersonaService {
         personaDTO.setId(persona.getId());
         personaDTO.setIdHojaVida(hojaVida.getId());
 
-        // Actualizar metadata del usuario en Supabase con el idPersona
-        try {
-            Map<String, Object> userUpdate = Map.of("user_metadata", Map.of("idPersona", persona.getId()));
-            Map<String, Object> response = supabaseAuthClient.updateUser(userUpdate);
-            
-            // Verificar si hay error en la respuesta de Supabase
-            if (response.containsKey("error")) {
-                log.error("Error en respuesta de Supabase: {}", response.get("error"));
-                throw new IllegalStateException("Error de Supabase: " + response.get("error"));
-            }
-            
-            log.info("Metadata actualizada en Supabase con idPersona: {}", persona.getId());
-        } catch (Exception e) {
-            log.error("Error al actualizar metadata de usuario en Supabase: {}", e.getMessage());
-            throw new IllegalStateException("No se pudo actualizar la metadata del usuario en Supabase", e);
-        }
+        // Actualiza user_metadata.idPersona en Supabase (mismo comportamiento que create)
+        this.actualizarIdPersonaEnSupabase(persona.getId());
 
         return personaDTO;
     }
@@ -139,6 +125,32 @@ public class PersonaServiceImpl implements IPersonaService {
         return personaRepository.findByNumeroDocumento(numeroDocumento)
                 .map(PersonaMapper.INSTANCE::toPersonaDTO)
                 .orElse(null);
+    }
+
+    @Override
+    public boolean actualizarIdPersonaEnSupabase(Long idPersona) throws IllegalStateException {
+        try {
+            Map<String, Object> userUpdate = Map.of("data", Map.of("idPersona", idPersona));
+            Map<String, Object> response = supabaseAuthClient.updateUser(userUpdate);
+            if (response != null && response.containsKey("error") && response.get("error") != null) {
+                log.error("Error en respuesta de Supabase: {}", response.get("error"));
+                throw new IllegalStateException("Error de Supabase: " + response.get("error"));
+            }
+            log.info("Metadata actualizada en Supabase con idPersona: {}", idPersona);
+            return true;
+        } catch (Exception e) {
+            log.error("Error al actualizar metadata de usuario en Supabase: {}", e.getMessage());
+            throw new IllegalStateException("No se pudo actualizar la información del usuario. Intente de nuevo o contacte al administrador.", e);
+        }
+    }
+
+    @Override
+    public boolean migrarUsuarioPorNumeroDocumento(String numeroDocumento) throws IllegalStateException {
+        PersonaDTO persona = this.findByNumeroDocumento(numeroDocumento);
+        if (persona == null) {
+            return false; // no existe persona para el documento
+        }
+        return this.actualizarIdPersonaEnSupabase(persona.getId());
     }
 
     @Autowired
