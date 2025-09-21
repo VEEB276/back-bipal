@@ -100,6 +100,20 @@ public class PersonaController {
         }
     }
 
+    // Endpoint de migración de usuario: delega en el servicio
+    @PostMapping("/migracion-usuario")
+    public ResponseEntity<Void> migracionUsuario(@RequestParam(name = "numero-documento") String numeroDocumento) {
+        try {
+            boolean actualizado = this.personaService.migrarUsuarioPorNumeroDocumento(numeroDocumento);
+            if (!actualizado) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+        }
+    }
+
     //Inyecciones
     @Autowired
     public void setPersonaService(IPersonaService personaService) {
@@ -110,5 +124,4 @@ public class PersonaController {
     public void setPersonaEliminarService(IPersonaEliminarService personaEliminarService) {
         this.personaEliminarService = personaEliminarService;
     }
-
 }
