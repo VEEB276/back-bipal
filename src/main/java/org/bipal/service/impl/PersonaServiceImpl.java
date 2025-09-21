@@ -3,7 +3,7 @@ package org.bipal.service.impl;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.bipal.dto.*;
-import org.bipal.external.supabase.SupabaseFunctionsClient;
+import org.bipal.external.supabase.SupabaseAuthClient;
 import org.bipal.mapper.*;
 import org.bipal.model.HojaVidaPersona;
 import org.bipal.model.Persona;
@@ -36,7 +36,7 @@ public class PersonaServiceImpl implements IPersonaService {
 
     private IHojaVidaPersonaRepository hojaVidaPersonaRepository;
 
-    private SupabaseFunctionsClient supabaseFunctionsClient;
+    private SupabaseAuthClient supabaseAuthClient;
 
     @Transactional
     @Override
@@ -47,7 +47,6 @@ public class PersonaServiceImpl implements IPersonaService {
 
         //Se guarda la persona
         Persona persona = this.personaRepository.save(toPersona);
-        this.personaRepository.flush();
 
         HojaVidaPersona hojaVidaPersona = new HojaVidaPersona();
         hojaVidaPersona.setIdPersona(persona.getId());
@@ -56,7 +55,6 @@ public class PersonaServiceImpl implements IPersonaService {
 
         //Se guarda la información de hoja de vida persona
         HojaVidaPersona hojaVida = this.hojaVidaPersonaRepository.save(hojaVidaPersona);
-        this.hojaVidaPersonaRepository.flush();
 
         //Se setean ids en el DTO
         personaDTO.setId(persona.getId());
@@ -64,8 +62,15 @@ public class PersonaServiceImpl implements IPersonaService {
 
         // Actualizar metadata del usuario en Supabase con el idPersona
         try {
-            Map<String, Object> metadataUpdate = Map.of("idPersona", persona.getId());
-            supabaseFunctionsClient.updateUserMetadata(metadataUpdate);
+            Map<String, Object> userUpdate = Map.of("user_metadata", Map.of("idPersona", persona.getId()));
+            Map<String, Object> response = supabaseAuthClient.updateUser(userUpdate);
+            
+            // Verificar si hay error en la respuesta de Supabase
+            if (response.containsKey("error")) {
+                log.error("Error en respuesta de Supabase: {}", response.get("error"));
+                throw new IllegalStateException("Error de Supabase: " + response.get("error"));
+            }
+            
             log.info("Metadata actualizada en Supabase con idPersona: {}", persona.getId());
         } catch (Exception e) {
             log.error("Error al actualizar metadata de usuario en Supabase: {}", e.getMessage());
@@ -167,8 +172,8 @@ public class PersonaServiceImpl implements IPersonaService {
     }
 
     @Autowired
-    public void setSupabaseFunctionsClient(SupabaseFunctionsClient supabaseFunctionsClient) {
-        this.supabaseFunctionsClient = supabaseFunctionsClient;
+    public void setSupabaseAuthClient(SupabaseAuthClient supabaseAuthClient) {
+        this.supabaseAuthClient = supabaseAuthClient;
     }
 
 }
