@@ -8,12 +8,16 @@ import okhttp3.OkHttpClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Configuración Feign para edge functions de Supabase.
  * No añade service-role; reenvía el Authorization del usuario automáticamente.
  */
 public class SupabaseFunctionsFeignConfig {
+
+    @Value("${supabase.anon-key:}")
+    private String supabaseAnonKey;
 
     @Bean
     Logger.Level supabaseFunctionsFeignLoggerLevel() { return Logger.Level.BASIC; }
@@ -29,6 +33,10 @@ public class SupabaseFunctionsFeignConfig {
     @Bean
     public RequestInterceptor userAuthorizationRelayInterceptor() {
         return template -> {
+            // Siempre enviar apikey requerida por Supabase Functions (en la pasarela)
+            if (supabaseAnonKey != null && !supabaseAnonKey.isEmpty()) {
+                template.header("apikey", supabaseAnonKey);
+            }
             // Evitar sobreescribir si ya fue seteado manualmente
             if (template.headers().containsKey("Authorization")) return;
             ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();

@@ -47,7 +47,6 @@ public class PersonaServiceImpl implements IPersonaService {
 
         //Se guarda la persona
         Persona persona = this.personaRepository.save(toPersona);
-        this.personaRepository.flush();
 
         HojaVidaPersona hojaVidaPersona = new HojaVidaPersona();
         hojaVidaPersona.setIdPersona(persona.getId());
@@ -56,7 +55,6 @@ public class PersonaServiceImpl implements IPersonaService {
 
         //Se guarda la información de hoja de vida persona
         HojaVidaPersona hojaVida = this.hojaVidaPersonaRepository.save(hojaVidaPersona);
-        this.hojaVidaPersonaRepository.flush();
 
         //Se setean ids en el DTO
         personaDTO.setId(persona.getId());
