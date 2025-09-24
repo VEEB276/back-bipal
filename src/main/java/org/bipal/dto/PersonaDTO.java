@@ -8,6 +8,7 @@ import org.bipal.util.IConstantesBipal;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -30,7 +31,7 @@ public class PersonaDTO implements Serializable {
     private String numeroDocumento;
 
     @JsonFormat(pattern = IConstantesBipal.PATTERN_DATE_CLIENTE, timezone = IConstantesBipal.ZONA_HORARIA_COLOMBIA)
-    private Date fechaExpedicionDoc;
+    private LocalDate fechaExpedicionDoc;
 
     private Long idGenero;
 
@@ -45,7 +46,7 @@ public class PersonaDTO implements Serializable {
     private String segundoApellido;
 
     @JsonFormat(pattern = IConstantesBipal.PATTERN_DATE_CLIENTE, timezone = IConstantesBipal.ZONA_HORARIA_COLOMBIA)
-    private Date fechaNacimiento;
+    private LocalDate fechaNacimiento;
 
     private String lugarNacimiento;
 
