@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Modelo para experiencias hojas de vida
@@ -46,12 +46,10 @@ public class ExperienciaHV implements Serializable {
     private String dependenciaCargo;
 
     @Column(name = "fecha_desde")
-    @Temporal(TemporalType.DATE)
-    private Date fechaDesde;
+    private LocalDate fechaDesde;
 
     @Column(name = "fecha_hasta")
-    @Temporal(TemporalType.DATE)
-    private Date fechaHasta;
+    private LocalDate fechaHasta;
 
     //Relaciones
     @JsonIgnore

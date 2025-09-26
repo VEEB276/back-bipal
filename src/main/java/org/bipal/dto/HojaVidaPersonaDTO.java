@@ -27,10 +27,10 @@ public class HojaVidaPersonaDTO implements Serializable {
 
     private Long idPersona;
 
-    @JsonFormat(pattern = IConstantesBipal.PATTERN_DATE_CLIENTE, timezone = IConstantesBipal.ZONA_HORARIA_COLOMBIA)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = IConstantesBipal.ZONA_HORARIA_COLOMBIA)
     private Date fechaCreacion;
 
-    @JsonFormat(pattern = IConstantesBipal.PATTERN_DATE_CLIENTE, timezone = IConstantesBipal.ZONA_HORARIA_COLOMBIA)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = IConstantesBipal.ZONA_HORARIA_COLOMBIA)
     private Date fechaModificacion;
 
 }

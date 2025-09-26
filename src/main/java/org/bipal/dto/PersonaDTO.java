@@ -9,7 +9,6 @@ import org.bipal.util.IConstantesBipal;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Date;
 
 /**
  * DTO que contiene la información de una persona

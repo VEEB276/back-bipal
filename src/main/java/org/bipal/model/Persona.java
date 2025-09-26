@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Date;
 
 /**
  * Modelo para personas
@@ -36,7 +35,6 @@ public class Persona implements Serializable {
     private String numeroDocumento;
 
     @Column(name = "fecha_expedicion_documento")
-    @Temporal(TemporalType.DATE)
     private LocalDate fechaExpedicionDoc;
 
     @Column(name = "id_genero", nullable = false)
@@ -58,7 +56,6 @@ public class Persona implements Serializable {
     private String segundoApellido;
 
     @Column(name = "fecha_nacimiento")
-    @Temporal(TemporalType.DATE)
     private LocalDate fechaNacimiento;
 
     @Column(name = "lugar_nacimiento")

@@ -31,11 +31,9 @@ public class HojaVidaPersona implements Serializable {
     private Long idPersona;
 
     @Column(name = "fecha_creacion")
-    @Temporal(TemporalType.DATE)
     private Date fechaCreacion;
 
     @Column(name = "fecha_modificacion")
-    @Temporal(TemporalType.DATE)
     private Date fechaModificacion;
 
     //Relaciones

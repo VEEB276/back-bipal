@@ -8,7 +8,7 @@ import org.bipal.util.IConstantesBipal;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * DTO que contiene la información de experiencia de la hoja de vida
@@ -37,10 +37,10 @@ public class ExperienciaHVDTO implements Serializable {
 
     private String dependenciaCargo;
 
-    @JsonFormat(pattern = IConstantesBipal.PATTERN_DATE_CLIENTE, timezone = IConstantesBipal.ZONA_HORARIA_COLOMBIA, locale = "es_CO")
-    private Date fechaDesde;
+    @JsonFormat(pattern = IConstantesBipal.PATTERN_DATE_CLIENTE, timezone = IConstantesBipal.ZONA_HORARIA_COLOMBIA)
+    private LocalDate fechaDesde;
 
     @JsonFormat(pattern = IConstantesBipal.PATTERN_DATE_CLIENTE, timezone = IConstantesBipal.ZONA_HORARIA_COLOMBIA)
-    private Date fechaHasta;
+    private LocalDate fechaHasta;
 
 }
